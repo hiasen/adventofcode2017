@@ -1,28 +1,28 @@
 #!/usr/bin/env python3
 import sys
-from itertools import chain
-
-s = sys.stdin.read().strip() 
 
 
-def filter_previous(it):
-    previous = next(it)
-    for x in it:
-        if x == previous:
-            yield x
-        previous = x
+def filter_equal(it1, it2):
+    yield from (x for x, y in zip(it1, it2) if x == y)
 
 
-def halfway_around_pairs(sequence):
-    n = len(sequence)
-    half = n//2
-    assert 2*half == n, "Sequence should be of even length"
-    for x, y in zip(sequence[:half], sequence[half:]):
-        if x == y:
-            yield x
-    
+def sum_of_equal(it1, it2):
+    return sum(map(int, filter_equal(it1, it2)))
 
 
+def compute(s):
+    half = len(s)//2
+    assert 2 * half == len(s), "Sequence should be of even length"
 
-print(sum(map(int, filter_previous(chain(iter(s), s[0])))))
-print(sum(map(int, halfway_around_pairs(s)))*2)
+    return (
+        sum_of_equal(s, s[1:] + s[:1]),
+        sum_of_equal(s[half:], s[:half]) * 2
+    )
+
+
+for s in sys.stdin:
+    try:
+        print(compute(s.strip()))
+    except AssertionError as e:
+        print(e, file=sys.stderr)
+
