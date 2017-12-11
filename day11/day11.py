@@ -1,9 +1,20 @@
 import sys
-from collections import Counter
+from itertools import accumulate
 
-c = Counter(sys.stdin.readline().strip().split(","))
-n = c["n"] - c["s"]
-ne = c["ne"] - c["sw"]
-nw = c["nw"] - c["se"]
-print(max(abs(nw+n), abs(n+ne)))
+dir_map = {
+    "nw": 1,
+    "n": 1j,
+    "ne": -1+ 1j,
+    "se": -1,
+    "s":  -1j,
+    "sw": 1 -1j,
+}
 
+def key(x):
+    return int(max(x.imag, x.real))
+
+directions = sys.stdin.readline().strip().split(",")
+distances = list(accumulate(map(dir_map.get, directions)))
+
+print(key(distances[-1]))
+print(max(map(key, distances)))
