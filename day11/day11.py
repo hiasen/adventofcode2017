@@ -11,7 +11,7 @@ dir_map = {
 }
 
 def key(x):
-    return int(max(x.imag, x.real))
+    return max(abs(int(x.imag)), abs(int(x.real)))
 
 directions = sys.stdin.readline().strip().split(",")
 distances = list(accumulate(map(dir_map.get, directions)))
