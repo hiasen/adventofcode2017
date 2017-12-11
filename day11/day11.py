@@ -1,20 +1,14 @@
 import sys
 from itertools import accumulate
 
-dir_map = {
-    "nw": 1,
-    "n": 1j,
-    "ne": -1+ 1j,
-    "se": -1,
-    "s":  -1j,
-    "sw": 1 -1j,
-}
+direction_strings = ["n", "ne", "se", "s", "sw", "nw"]
+dir_map = dict(zip(direction_strings, [1, 1j, -1+1j, -1, -1j, 1-1j]))
 
-def key(x):
-    return max(abs(int(x.imag)), abs(int(x.real)))
+def distance(x):
+    return max(abs(x.imag), abs(x.real), abs(x.real+x.imag))
 
 directions = sys.stdin.readline().strip().split(",")
-distances = list(accumulate(map(dir_map.get, directions)))
+positions = list(accumulate(map(dir_map.get, directions)))
 
-print(key(distances[-1]))
-print(max(map(key, distances)))
+print(distance(positions[-1]))
+print(max(map(distance, positions)))
