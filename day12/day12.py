@@ -2,23 +2,42 @@ import sys
 import re
 
 
-pattern = re.compile(r"(^\d+) <-> (.*)\n$")
+def main():
+    adjacency_list = parse_adjacency_list()
+    print(len(do_search("0", adjacency_list)))
+    print(len(get_groups(adjacency_list)))
 
-adjacency_list = {}
 
-for line in sys.stdin:
-    x, y = pattern.match(line).groups()
-    adjacency_list[x] = set(y.split(", "))
+def parse_adjacency_list():
+    pattern = re.compile(r"(^\d+) <-> (.*)\n$")
+    return {
+        x: set(y.split(", "))
+        for x, y in (
+            pattern.match(line).groups() 
+            for line in sys.stdin
+        )
+    }
 
-groups = set()
-for p in adjacency_list:
+
+def do_search(p, adjacency_list):
     found = set()
     stack = [p]
     while stack:
         x = stack.pop()
         found.add(x)
         stack.extend(adjacency_list[x] - found)
-    groups.add(frozenset(found))
-print(len(next(x for x in groups if "0" in x)))
-print(len(groups))
+    return frozenset(found)
 
+
+def get_groups(adjacency_list):
+    groups = set()
+    not_found = set(adjacency_list)
+    while not_found:
+        found = do_search(not_found.pop(), adjacency_list)
+        groups.add(found)
+        not_found -= found
+    return groups
+
+
+if __name__ == "__main__":
+    main()
